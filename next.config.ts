@@ -1,11 +1,8 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Cloudflare Pages için gerekli
-  output: 'export',
-  // Ancak @cloudflare/next-on-pages bunu kendisi handle ediyor.
-  // output: 'export' yerine next-on-pages'in SSR modunu kullanıyoruz.
-  // Şimdilik SSR ve Edge Runtime destekli mode:
+  // Cloudflare Pages deploy: @cloudflare/next-on-pages adapter SSR + Edge Runtime'ı handle eder.
+  // (Eski 'output: export' kaldırıldı — SSR ve API route'larıyla çakışıyordu.)
   images: {
     // Cloudflare Pages'de Image Optimization yok, loader kullan
     unoptimized: true,
