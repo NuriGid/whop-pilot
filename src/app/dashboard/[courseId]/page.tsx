@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { DollarSign, Users, TrendingDown, RefreshCw, Zap, Brain, BarChart3, Activity } from 'lucide-react';
 
 import Header from '@/components/dashboard/Header';
@@ -21,7 +21,10 @@ import {
   mockMemberActivity,
 } from '@/lib/mock-data';
 
-export default function DashboardPage({ params }: { params: { companyId: string } }) {
+export default function DashboardPage({ params }: { params: Promise<{ courseId: string }> }) {
+  // Next 15: client component'te params Promise'ını React.use() ile aç
+  const { courseId } = use(params);
+
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [insights, setInsights] = useState(mockAIInsights);
@@ -40,8 +43,8 @@ export default function DashboardPage({ params }: { params: { companyId: string 
   useEffect(() => {
     const fetchRealData = async () => {
       try {
-        // URL'de courseId veya companyId olabilir
-        const res = await fetch(`/api/metrics?courseId=${params.companyId}`);
+        // URL'den gelen courseId ile Whop Course verisini çek
+        const res = await fetch(`/api/metrics?courseId=${courseId}`);
         if (res.ok) {
           const data = await res.json();
           if (data.courseName) {
@@ -60,12 +63,12 @@ export default function DashboardPage({ params }: { params: { companyId: string 
       }
     };
     fetchRealData();
-  }, [params.companyId]);
+  }, [courseId]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
-      const res = await fetch(`/api/metrics?courseId=${params.companyId}`);
+      const res = await fetch(`/api/metrics?courseId=${courseId}`);
       if (res.ok) {
         const data = await res.json();
         if (data.courseName) {

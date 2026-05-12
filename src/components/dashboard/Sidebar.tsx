@@ -17,11 +17,11 @@ const navItems = [
   { icon: TrendingUp,      label: 'Analytics', href: '/analytics' },
 ];
 
-interface SidebarProps { companyId: string; companyName?: string; }
+interface SidebarProps { courseId: string; courseName?: string; }
 
-export default function Sidebar({ companyId, companyName = 'My Whop' }: SidebarProps) {
+export default function Sidebar({ courseId, courseName = 'My Course' }: SidebarProps) {
   const pathname = usePathname();
-  const base = `/dashboard/${companyId}`;
+  const base = `/dashboard/${courseId}`;
 
   return (
     <aside style={{
@@ -67,8 +67,8 @@ export default function Sidebar({ companyId, companyName = 'My Whop' }: SidebarP
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <div>
-            <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 1 }}>Active Store</div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#f0f6ff' }}>{companyName}</div>
+            <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 1 }}>Active Course</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#f0f6ff' }}>{courseName}</div>
           </div>
           <ChevronRight size={14} color="#6b7280" />
         </div>
