@@ -1,6 +1,5 @@
 import { headers } from 'next/headers';
-import { WhopServerSdk } from '@whop/sdk';
-import { getWhopClient } from './whop';
+import { Whop } from '@whop/sdk';
 
 export async function verifyUserToken() {
   try {
@@ -19,10 +18,10 @@ export async function verifyUserToken() {
     
     // Gerçek Whop Entegrasyonu
     // Whop iframe üzerinden gelen kullanıcı token'ı ile SDK'yı başlatıyoruz
-    const userClient = new WhopServerSdk({ token });
+    const userClient = new Whop({ apiKey: token });
     
     // Kullanıcı bilgilerini çekiyoruz
-    const userResponse = await userClient.users.retrieve({ id: 'me' });
+    const userResponse = await userClient.users.retrieve('me');
     
     return { 
       user: { 

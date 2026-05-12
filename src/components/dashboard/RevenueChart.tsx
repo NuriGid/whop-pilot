@@ -7,12 +7,25 @@ import {
 import { useState } from 'react';
 import type { RevenueDataPoint, MemberActivity } from '@/types';
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface TooltipPayloadItem {
+  dataKey: string;
+  name: string;
+  value: number;
+  color: string;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayloadItem[];
+  label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (!active || !payload?.length) return null;
   return (
     <div style={{ background: '#1a2332', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px', fontSize: 12 }}>
       <div style={{ color: '#6b7280', marginBottom: 6, fontWeight: 600 }}>{label}</div>
-      {payload.map((p: any) => (
+      {payload.map((p: TooltipPayloadItem) => (
         <div key={p.dataKey} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
           <div style={{ width: 8, height: 8, borderRadius: '50%', background: p.color }} />
           <span style={{ color: '#8b9ab1' }}>{p.name}:</span>

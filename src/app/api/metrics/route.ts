@@ -61,10 +61,10 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({
         companyId,
         totalCourses: courses.length,
+        // List endpoint chapters döndürmüyor — detaylı chapterCount için /api/metrics?courseId=...
         courses: courses.map((c) => ({
           id: c.id,
           title: c.title,
-          chapterCount: c.chapters?.length ?? 0,
         })),
       });
     }

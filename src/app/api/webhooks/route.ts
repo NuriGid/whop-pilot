@@ -1,7 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto'; // Edge compatible crypto? Actually next-on-pages handles this.
 
 export const runtime = 'edge';
+
+// Edge Runtime: Node 'crypto' yerine Web Crypto API kullan\u0131yoruz.
+// timingSafeEqual yerine constant-time string compare implementasyonu.
+function timingSafeEqualHex(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
+
+async function hmacSha256Hex(secret: string, data: string): Promise<string> {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    enc.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data));
+  // Web Crypto -> ArrayBuffer -> hex
+  return Array.from(new Uint8Array(sig))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,13 +43,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing signature' }, { status: 401 });
     }
 
-    // Verify HMAC signature
-    const expected = crypto
-      .createHmac('sha256', webhookSecret)
-      .update(rawBody)
-      .digest('hex');
+    // HMAC do\u011frulama (Web Crypto API, Edge-compatible)
+    const expected = await hmacSha256Hex(webhookSecret, rawBody);
 
-    if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
+    if (!timingSafeEqualHex(signature, expected)) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
 

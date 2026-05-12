@@ -37,7 +37,7 @@ export default function ChurnGuard({ events }: { events: ChurnEvent[] }) {
                 <span style={{ fontSize: 14, fontWeight: 600, color: '#f0f6ff' }}>{event.userName}</span>
                 <span style={{ fontSize: 11, color: '#4b5563' }}>cancelled {timeAgo(event.cancelledAt)}</span>
               </div>
-              {event.reason && <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 8 }}>Reason: "{event.reason}"</div>}
+              {event.reason && <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 8 }}>Reason: &quot;{event.reason}&quot;</div>}
               {event.recoverable && event.recoveryAction && (
                 <div style={{ padding: '8px 12px', borderRadius: 8, background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.15)', fontSize: 12, color: '#a5b4fc', marginBottom: 8 }}>
                   💡 {event.recoveryAction}

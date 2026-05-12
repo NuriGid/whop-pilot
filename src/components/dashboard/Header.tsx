@@ -64,7 +64,8 @@ export default function Header({ title, subtitle, companyName = 'My Whop', onRef
           padding: '7px 14px', borderRadius: 8,
           background: 'rgba(255,255,255,0.04)',
           border: '1px solid rgba(255,255,255,0.08)',
-          cursor: 'pointer', transition: 'all 0.2s',
+          cursor: 'pointer',
+          transition: 'all 0.2s',
         }}>
           <Search size={14} color="#6b7280" />
           <span style={{ fontSize: 13, color: '#4b5563' }}>Search...</span>
@@ -79,7 +80,7 @@ export default function Header({ title, subtitle, companyName = 'My Whop', onRef
         {/* Refresh */}
         {onRefresh && (
           <button onClick={onRefresh} style={{
-            width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer',
+            width: 36, height: 36, borderRadius: 8, cursor: 'pointer',
             background: 'rgba(255,255,255,0.04)',
             border: '1px solid rgba(255,255,255,0.08)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -92,7 +93,7 @@ export default function Header({ title, subtitle, companyName = 'My Whop', onRef
 
         {/* Notifications */}
         <button style={{
-          width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer',
+          width: 36, height: 36, borderRadius: 8, cursor: 'pointer',
           background: 'rgba(244,63,94,0.1)',
           border: '1px solid rgba(244,63,94,0.2)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
