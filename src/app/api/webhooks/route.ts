@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = 'edge';
+
 
 // Edge Runtime: Node 'crypto' yerine Web Crypto API kullan\u0131yoruz.
 // timingSafeEqual yerine constant-time string compare implementasyonu.

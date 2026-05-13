@@ -2,7 +2,7 @@ import Sidebar from '@/components/dashboard/Sidebar';
 import { verifyUserToken } from '@/lib/auth';
 
 // Cloudflare Pages: Bu route Edge Runtime'da çalışmalı (next-on-pages gereksinimi)
-export const runtime = 'edge';
+
 
 export default async function DashboardLayout({
   children,

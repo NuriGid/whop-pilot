@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { mockAIInsights } from '@/lib/mock-data';
 
-export const runtime = 'edge';
+
 
 export async function POST(req: NextRequest) {
   try {
