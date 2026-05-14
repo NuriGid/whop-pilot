@@ -17,11 +17,11 @@ const navItems = [
   { icon: TrendingUp,      label: 'Analytics', href: '/analytics' },
 ];
 
-interface SidebarProps { courseId: string; courseName?: string; }
+interface SidebarProps { companyId: string; courseName?: string; }
 
-export default function Sidebar({ courseId, courseName = 'My Course' }: SidebarProps) {
+export default function Sidebar({ companyId, courseName = 'My Course' }: SidebarProps) {
   const pathname = usePathname();
-  const base = `/dashboard/${courseId}`;
+  const base = `/dashboard/${companyId}`;
 
   return (
     <aside style={{

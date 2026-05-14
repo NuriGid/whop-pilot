@@ -22,9 +22,9 @@ import {
   mockMemberActivity,
 } from '@/lib/mock-data';
 
-export default function DashboardPage({ params }: { params: Promise<{ courseId: string }> }) {
+export default function DashboardPage({ params }: { params: Promise<{ companyId: string }> }) {
   // Next 15: client component'te params Promise'ını React.use() ile aç
-  const { courseId } = use(params);
+  const { companyId } = use(params);
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
@@ -44,8 +44,8 @@ export default function DashboardPage({ params }: { params: Promise<{ courseId: 
   useEffect(() => {
     const fetchRealData = async () => {
       try {
-        // URL'den gelen courseId ile Whop Course verisini çek
-        const res = await fetch(`/api/metrics?courseId=${courseId}`);
+        // URL'den gelen companyId ile Whop Course verisini çek
+        const res = await fetch(`/api/metrics?courseId=${companyId}`);
         if (res.ok) {
           const data = await res.json();
           if (data.courseName) {
@@ -64,12 +64,12 @@ export default function DashboardPage({ params }: { params: Promise<{ courseId: 
       }
     };
     fetchRealData();
-  }, [courseId]);
+  }, [companyId]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
-      const res = await fetch(`/api/metrics?courseId=${courseId}`);
+      const res = await fetch(`/api/metrics?courseId=${companyId}`);
       if (res.ok) {
         const data = await res.json();
         if (data.courseName) {

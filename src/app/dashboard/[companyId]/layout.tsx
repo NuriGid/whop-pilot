@@ -9,10 +9,10 @@ export default async function DashboardLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ courseId: string }>;
+  params: Promise<{ companyId: string }>;
 }) {
   // Next 15: params artık async, await ile aç (App Router breaking change)
-  const { courseId } = await params;
+  const { companyId } = await params;
 
   // Gerçek Whop Entegrasyonu: Token kontrolü
   const { user } = await verifyUserToken();
@@ -24,7 +24,7 @@ export default async function DashboardLayout({
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar 
-        courseId={courseId} 
+        companyId={companyId} 
         courseName={isAuthorized ? "My Whop Course" : "Demo Course"} 
       />
       <main style={{ flex: 1, minWidth: 0, overflowX: 'hidden' }}>
