@@ -54,9 +54,12 @@ export default function DashboardPage({ params }: { params: Promise<{ companyId:
             // Gerçek verileri mock üzerine yaz
             setMetrics(prev => ({
               ...prev,
-              activeMembers: data.activeMembers || prev.activeMembers,
-              totalRevenue: data.totalRevenueStr || prev.totalRevenue,
-              churnRate: data.atRiskPercent || prev.churnRate,
+              totalRevenue: data.totalRevenue ?? prev.totalRevenue,
+              activeMembers: data.activeMembers ?? prev.activeMembers,
+              mrr: data.mrr ?? prev.mrr,
+              churnRate: data.churnRate ?? prev.churnRate,
+              recoveredRevenue: data.recoveredRevenue ?? prev.recoveredRevenue,
+              ltv: data.ltv ?? prev.ltv,
             }));
           }
         }
@@ -78,9 +81,12 @@ export default function DashboardPage({ params }: { params: Promise<{ companyId:
           setCourseStats(data);
           setMetrics(prev => ({
             ...prev,
-            activeMembers: data.activeMembers || prev.activeMembers,
-            totalRevenue: data.totalRevenueStr || prev.totalRevenue,
-            churnRate: data.atRiskPercent || prev.churnRate,
+            totalRevenue: data.totalRevenue ?? prev.totalRevenue,
+            activeMembers: data.activeMembers ?? prev.activeMembers,
+            mrr: data.mrr ?? prev.mrr,
+            churnRate: data.churnRate ?? prev.churnRate,
+            recoveredRevenue: data.recoveredRevenue ?? prev.recoveredRevenue,
+            ltv: data.ltv ?? prev.ltv,
           }));
         }
       }

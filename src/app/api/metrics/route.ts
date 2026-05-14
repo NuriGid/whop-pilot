@@ -40,20 +40,25 @@ export async function GET(req: NextRequest) {
     const payments = paymentsData?.data ?? paymentsData ?? [];
     const paymentList = Array.isArray(payments) ? payments : [];
 
-    // Toplam geliri hesapla
-    let totalRevenueCents = 0;
+    // Toplam geliri hesapla (Whop API total'ı dolar cinsinden döndürüyor)
+    let totalRevenue = 0;
     paymentList.forEach((p: { total?: number; usd_total?: number }) => {
       const amount = p.usd_total ?? p.total ?? 0;
-      totalRevenueCents += amount;
+      totalRevenue += amount;
     });
 
-    const totalRevenueStr = `$${(totalRevenueCents / 100).toLocaleString('en-US')}`;
+    // Üye sayısı (member_count company objesinde var)
+    const memberCount = company?.member_count ?? paymentList.length;
 
     return NextResponse.json({
       companyId,
       courseName: company?.title || 'My Store',
-      activeMembers: paymentList.length,
-      totalRevenueStr,
+      activeMembers: memberCount,
+      totalRevenue: Math.round(totalRevenue),
+      mrr: Math.round(totalRevenue),
+      churnRate: 0,
+      recoveredRevenue: 0,
+      ltv: memberCount > 0 ? Math.round(totalRevenue / memberCount) : 0,
       atRiskPercent: 0,
       chapterCount: 0,
       lessonCount: 0,
