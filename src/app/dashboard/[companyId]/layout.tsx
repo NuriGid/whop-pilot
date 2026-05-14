@@ -1,5 +1,6 @@
 import Sidebar from '@/components/dashboard/Sidebar';
 import { verifyUserToken } from '@/lib/auth';
+import { getWhopClient } from '@/lib/whop';
 
 // Cloudflare Pages: Bu route Edge Runtime'da çalışmalı (next-on-pages gereksinimi)
 export const runtime = 'edge';
@@ -18,14 +19,24 @@ export default async function DashboardLayout({
   const { user } = await verifyUserToken();
 
   // Şimdilik lokal geliştirme modunda hata fırlatmadan mock data ile devam ediyoruz.
-  // Canlıda (Vercel/Cloudflare) eğer user yoksa 'Unauthorized' dönebilirsin.
   const isAuthorized = !!user;
+
+  let storeName = isAuthorized ? "My Whop Store" : "Demo Store";
+  try {
+    const whopClient = getWhopClient();
+    const company = await whopClient.companies.retrieve(companyId);
+    if (company?.title) {
+      storeName = company.title;
+    }
+  } catch (error) {
+    console.error("Layout failed to fetch company name:", error);
+  }
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar 
         companyId={companyId} 
-        courseName={isAuthorized ? "My Whop Course" : "Demo Course"} 
+        courseName={storeName} 
       />
       <main style={{ flex: 1, minWidth: 0, overflowX: 'hidden' }}>
         {children}
