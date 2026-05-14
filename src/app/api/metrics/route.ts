@@ -23,8 +23,10 @@ export async function GET(req: NextRequest) {
       // Whop API amount'u cent cinsinden (örn: 1500 = $15.00) döndürebilir
       let totalRevenueCents = 0;
       payments.forEach(p => {
-        if (p.status === 'paid' && p.amount) {
-          totalRevenueCents += p.amount;
+        // @ts-ignore
+        if (p.total) {
+          // @ts-ignore
+          totalRevenueCents += p.total;
         }
       });
       
