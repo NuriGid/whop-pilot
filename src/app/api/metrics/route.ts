@@ -22,9 +22,10 @@ export async function GET(req: NextRequest) {
       // Toplam geliri hesapla (örneğin payment objesindeki amount üzerinden)
       // Whop API amount'u cent cinsinden (örn: 1500 = $15.00) döndürebilir
       let totalRevenueCents = 0;
-      payments.forEach((p: any) => {
-        if (p.total) {
-          totalRevenueCents += p.total;
+      payments.forEach(p => {
+        const pay = p as unknown as { total?: number };
+        if (pay.total) {
+          totalRevenueCents += pay.total;
         }
       });
       
