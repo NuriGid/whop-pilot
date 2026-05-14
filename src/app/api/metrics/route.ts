@@ -1,54 +1,70 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getWhopClient } from '@/lib/whop';
 
 export const runtime = 'edge';
+
+// Whop REST API'ye doğrudan fetch ile istek at (SDK yerine — Edge uyumluluğu için)
+async function whopFetch(path: string) {
+  const apiKey = process.env.WHOP_API_KEY;
+  if (!apiKey) throw new Error('WHOP_API_KEY not set');
+
+  const res = await fetch(`https://api.whop.com/api/v5${path}`, {
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!res.ok) {
+    const errBody = await res.text();
+    throw new Error(`Whop API ${res.status}: ${errBody}`);
+  }
+
+  return res.json();
+}
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const courseId = searchParams.get('courseId');
     const companyId = searchParams.get('companyId');
 
-    const whopClient = getWhopClient();
-
-    if (companyId) {
-      const [company, paymentsRes] = await Promise.all([
-        whopClient.companies.retrieve(companyId),
-        whopClient.payments.list({ company_id: companyId }),
-      ]);
-
-      const payments = paymentsRes.data ?? [];
-      
-      // Toplam geliri hesapla (örneğin payment objesindeki amount üzerinden)
-      // Whop API amount'u cent cinsinden (örn: 1500 = $15.00) döndürebilir
-      let totalRevenueCents = 0;
-      payments.forEach(p => {
-        const pay = p as unknown as { total?: number };
-        if (pay.total) {
-          totalRevenueCents += pay.total;
-        }
-      });
-      
-      const totalRevenueStr = `$${(totalRevenueCents / 100).toLocaleString('en-US')}`;
-
-      return NextResponse.json({
-        companyId,
-        courseName: company.title || 'My Store',
-        totalStudents: payments.length, // Şimdilik ödeme sayısını üye sayısı kabul ediyoruz
-        activeMembers: payments.length,
-        totalRevenueStr,
-        // Mock veri kalıntılarını eziyoruz
-        atRiskPercent: 0,
-        chapterCount: 0,
-        lessonCount: 0,
-        avgCompletion: 0,
-        atRiskCount: 0,
-      });
+    if (!companyId) {
+      return NextResponse.json({ error: 'companyId gerekli' }, { status: 400 });
     }
 
-    return NextResponse.json({ error: 'courseId veya companyId gerekli' }, { status: 400 });
+    // Paralel olarak şirket bilgisi ve ödemeleri çek
+    const [company, paymentsData] = await Promise.all([
+      whopFetch(`/companies/${companyId}`),
+      whopFetch(`/companies/${companyId}/payments`),
+    ]);
+
+    const payments = paymentsData?.data ?? paymentsData ?? [];
+    const paymentList = Array.isArray(payments) ? payments : [];
+
+    // Toplam geliri hesapla
+    let totalRevenueCents = 0;
+    paymentList.forEach((p: { total?: number; usd_total?: number }) => {
+      const amount = p.usd_total ?? p.total ?? 0;
+      totalRevenueCents += amount;
+    });
+
+    const totalRevenueStr = `$${(totalRevenueCents / 100).toLocaleString('en-US')}`;
+
+    return NextResponse.json({
+      companyId,
+      courseName: company?.title || 'My Store',
+      activeMembers: paymentList.length,
+      totalRevenueStr,
+      atRiskPercent: 0,
+      chapterCount: 0,
+      lessonCount: 0,
+      avgCompletion: 0,
+      atRiskCount: 0,
+    });
   } catch (error) {
     console.error('Whop API error:', error);
-    return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+    return NextResponse.json({
+      error: 'Failed to fetch data',
+      detail: error instanceof Error ? error.message : String(error),
+    }, { status: 500 });
   }
 }

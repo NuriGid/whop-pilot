@@ -1,6 +1,5 @@
 import Sidebar from '@/components/dashboard/Sidebar';
 import { verifyUserToken } from '@/lib/auth';
-import { getWhopClient } from '@/lib/whop';
 
 // Cloudflare Pages: Bu route Edge Runtime'da çalışmalı (next-on-pages gereksinimi)
 export const runtime = 'edge';
@@ -12,21 +11,27 @@ export default async function DashboardLayout({
   children: React.ReactNode;
   params: Promise<{ companyId: string }>;
 }) {
-  // Next 15: params artık async, await ile aç (App Router breaking change)
   const { companyId } = await params;
-
-  // Gerçek Whop Entegrasyonu: Token kontrolü
   const { user } = await verifyUserToken();
-
-  // Şimdilik lokal geliştirme modunda hata fırlatmadan mock data ile devam ediyoruz.
   const isAuthorized = !!user;
 
+  // Doğrudan REST API ile şirket ismini çek (SDK yerine — Edge uyumluluğu)
   let storeName = isAuthorized ? "My Whop Store" : "Demo Store";
   try {
-    const whopClient = getWhopClient();
-    const company = await whopClient.companies.retrieve(companyId);
-    if (company?.title) {
-      storeName = company.title;
+    const apiKey = process.env.WHOP_API_KEY;
+    if (apiKey) {
+      const res = await fetch(`https://api.whop.com/api/v5/companies/${companyId}`, {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (res.ok) {
+        const company = await res.json();
+        if (company?.title) {
+          storeName = company.title;
+        }
+      }
     }
   } catch (error) {
     console.error("Layout failed to fetch company name:", error);
