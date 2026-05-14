@@ -1,5 +1,6 @@
 'use client';
 
+export const runtime = 'edge';
 import { useState, useEffect, use } from 'react';
 import { DollarSign, Users, TrendingDown, RefreshCw, Zap, Brain, BarChart3, Activity } from 'lucide-react';
 
