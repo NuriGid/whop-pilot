@@ -45,7 +45,7 @@ export default function DashboardPage({ params }: { params: Promise<{ companyId:
     const fetchRealData = async () => {
       try {
         // URL'den gelen companyId ile Whop Course verisini çek
-        const res = await fetch(`/api/metrics?courseId=${companyId}`);
+        const res = await fetch(`/api/metrics?companyId=${companyId}`);
         if (res.ok) {
           const data = await res.json();
           if (data.courseName) {
@@ -54,7 +54,8 @@ export default function DashboardPage({ params }: { params: Promise<{ companyId:
             // Gerçek verileri mock üzerine yaz
             setMetrics(prev => ({
               ...prev,
-              activeMembers: data.totalStudents || prev.activeMembers,
+              activeMembers: data.activeMembers || prev.activeMembers,
+              totalRevenue: data.totalRevenueStr || prev.totalRevenue,
               churnRate: data.atRiskPercent || prev.churnRate,
             }));
           }
@@ -69,7 +70,7 @@ export default function DashboardPage({ params }: { params: Promise<{ companyId:
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
-      const res = await fetch(`/api/metrics?courseId=${companyId}`);
+      const res = await fetch(`/api/metrics?companyId=${companyId}`);
       if (res.ok) {
         const data = await res.json();
         if (data.courseName) {
@@ -77,7 +78,8 @@ export default function DashboardPage({ params }: { params: Promise<{ companyId:
           setCourseStats(data);
           setMetrics(prev => ({
             ...prev,
-            activeMembers: data.totalStudents || prev.activeMembers,
+            activeMembers: data.activeMembers || prev.activeMembers,
+            totalRevenue: data.totalRevenueStr || prev.totalRevenue,
             churnRate: data.atRiskPercent || prev.churnRate,
           }));
         }

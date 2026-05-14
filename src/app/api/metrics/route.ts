@@ -11,61 +11,37 @@ export async function GET(req: NextRequest) {
 
     const whopClient = getWhopClient();
 
-    // ─── 1. Kurs Bilgisi ───────────────────────────────────────────────────────
-    if (courseId) {
-      // Belirli bir kurs için detaylı veri çek
-      const [course, studentsPage] = await Promise.all([
-        whopClient.courses.retrieve(courseId),
-        whopClient.courseStudents.list({ course_id: courseId, first: 100 }),
+    if (companyId) {
+      const [company, paymentsRes] = await Promise.all([
+        whopClient.companies.retrieve(companyId),
+        whopClient.payments.list({ company_id: companyId }),
       ]);
 
-      const students = studentsPage.data ?? [];
-      const totalStudents = students.length;
-
-      // Tamamlama oranları
-      const completionRates = students.map((s) => {
-        if (s.total_lessons_count === 0) return 0;
-        return (s.completed_lessons_count / s.total_lessons_count) * 100;
+      const payments = paymentsRes.data ?? [];
+      
+      // Toplam geliri hesapla (örneğin payment objesindeki amount üzerinden)
+      // Whop API amount'u cent cinsinden (örn: 1500 = $15.00) döndürebilir
+      let totalRevenueCents = 0;
+      payments.forEach(p => {
+        if (p.status === 'paid' && p.amount) {
+          totalRevenueCents += p.amount;
+        }
       });
-      const avgCompletion = completionRates.length
-        ? Math.round(completionRates.reduce((a, b) => a + b, 0) / completionRates.length)
-        : 0;
-
-      // Churn riski: Son 7 günde hiç ilerleme kaydetmeyenler
-      const atRiskStudents = students.filter((s) => {
-        // Tamamlanmamış ama hiç ilerleme yoksa risk altında
-        return s.completed_lessons_count === 0;
-      });
-
-      return NextResponse.json({
-        courseId,
-        courseName: course.title ?? 'My Course',
-        totalStudents,
-        avgCompletion,
-        atRiskCount: atRiskStudents.length,
-        atRiskPercent: totalStudents > 0
-          ? Math.round((atRiskStudents.length / totalStudents) * 100)
-          : 0,
-        chapterCount: course.chapters?.length ?? 0,
-        lessonCount: course.chapters?.reduce(
-          (sum, ch) => sum + (ch.lessons?.length ?? 0), 0
-        ) ?? 0,
-      });
-    }
-
-    // ─── 2. Şirketin Tüm Kursları ─────────────────────────────────────────────
-    if (companyId) {
-      const coursesPage = await whopClient.courses.list({ company_id: companyId });
-      const courses = coursesPage.data ?? [];
+      
+      const totalRevenueStr = `$${(totalRevenueCents / 100).toLocaleString('en-US')}`;
 
       return NextResponse.json({
         companyId,
-        totalCourses: courses.length,
-        // List endpoint chapters döndürmüyor — detaylı chapterCount için /api/metrics?courseId=...
-        courses: courses.map((c) => ({
-          id: c.id,
-          title: c.title,
-        })),
+        courseName: company.title || 'My Store',
+        totalStudents: payments.length, // Şimdilik ödeme sayısını üye sayısı kabul ediyoruz
+        activeMembers: payments.length,
+        totalRevenueStr,
+        // Mock veri kalıntılarını eziyoruz
+        atRiskPercent: 0,
+        chapterCount: 0,
+        lessonCount: 0,
+        avgCompletion: 0,
+        atRiskCount: 0,
       });
     }
 
