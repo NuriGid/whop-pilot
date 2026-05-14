@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
   // 3. Whop API'ye erişim var mı?
   try {
-    const whopRes = await fetch('https://api.whop.com/api/v5/me', {
+    const whopRes = await fetch('https://api.whop.com/api/v1/me', {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 
   // 4. Şirket verisini çekebiliyor muyuz?
   try {
-    const companyRes = await fetch('https://api.whop.com/api/v5/companies/biz_hRcZv2fxhfD0um', {
+    const companyRes = await fetch('https://api.whop.com/api/v1/companies/biz_hRcZv2fxhfD0um', {
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',

@@ -20,7 +20,7 @@ export default async function DashboardLayout({
   try {
     const apiKey = process.env.WHOP_API_KEY;
     if (apiKey) {
-      const res = await fetch(`https://api.whop.com/api/v5/companies/${companyId}`, {
+      const res = await fetch(`https://api.whop.com/api/v1/companies/${companyId}`, {
         headers: {
           Authorization: `Bearer ${apiKey}`,
           'Content-Type': 'application/json',

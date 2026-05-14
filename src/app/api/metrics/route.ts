@@ -7,7 +7,7 @@ async function whopFetch(path: string) {
   const apiKey = process.env.WHOP_API_KEY;
   if (!apiKey) throw new Error('WHOP_API_KEY not set');
 
-  const res = await fetch(`https://api.whop.com/api/v5${path}`, {
+  const res = await fetch(`https://api.whop.com/api/v1${path}`, {
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
     // Paralel olarak şirket bilgisi ve ödemeleri çek
     const [company, paymentsData] = await Promise.all([
       whopFetch(`/companies/${companyId}`),
-      whopFetch(`/companies/${companyId}/payments`),
+      whopFetch(`/payments?company_id=${companyId}`),
     ]);
 
     const payments = paymentsData?.data ?? paymentsData ?? [];
