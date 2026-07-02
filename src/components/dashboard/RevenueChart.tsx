@@ -6,6 +6,7 @@ import {
 } from 'recharts';
 import { useState } from 'react';
 import type { RevenueDataPoint, MemberActivity } from '@/types';
+import DemoBadge from '@/components/ui/DemoBadge';
 
 interface TooltipPayloadItem {
   dataKey: string;
@@ -43,7 +44,7 @@ export default function RevenueChart({ revenueData, memberData }: { revenueData:
     <div style={{ background: '#111827', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, overflow: 'hidden' }}>
       <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: '#f0f6ff', fontFamily: 'Space Grotesk, sans-serif' }}>Performance Analytics</div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: '#f0f6ff', fontFamily: 'Space Grotesk, sans-serif', display: 'flex', alignItems: 'center', gap: 8 }}>Performance Analytics <DemoBadge /></div>
           <div style={{ fontSize: 12, color: '#6b7280' }}>30-day overview</div>
         </div>
         <div style={{ display: 'flex', gap: 6, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, padding: 3 }}>

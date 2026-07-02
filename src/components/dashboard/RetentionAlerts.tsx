@@ -3,6 +3,7 @@
 import { ShieldAlert, Clock, Send, ChevronRight } from 'lucide-react';
 import { formatCurrency, getInitials } from '@/lib/utils';
 import type { RetentionAlert } from '@/types';
+import DemoBadge from '@/components/ui/DemoBadge';
 
 const riskConfig = {
   critical: { color: '#f87171', bg: 'rgba(248,113,113,0.1)', border: 'rgba(248,113,113,0.25)', label: 'CRITICAL' },
@@ -23,7 +24,7 @@ export default function RetentionAlerts({ alerts, compact = false }: { alerts: R
               <ShieldAlert size={15} color="#f87171" />
             </div>
             <div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: '#f0f6ff', fontFamily: 'Space Grotesk, sans-serif' }}>Retention Alerts</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#f0f6ff', fontFamily: 'Space Grotesk, sans-serif', display: 'flex', alignItems: 'center', gap: 8 }}>Retention Alerts <DemoBadge /></div>
               <div style={{ fontSize: 12, color: '#6b7280' }}>Real-time churn risk detection</div>
             </div>
           </div>

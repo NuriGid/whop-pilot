@@ -3,6 +3,7 @@
 import { DollarSign, RefreshCw, CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
 import { formatCurrency, getInitials, timeAgo } from '@/lib/utils';
 import type { RevenueRecoveryItem } from '@/types';
+import DemoBadge from '@/components/ui/DemoBadge';
 
 const statusConfig = {
   pending:    { color: '#fbbf24', bg: 'rgba(251,191,36,0.1)',  border: 'rgba(251,191,36,0.2)',  label: 'Pending',    icon: Clock },
@@ -25,7 +26,7 @@ export default function RevenueRecovery({ items }: { items: RevenueRecoveryItem[
               <DollarSign size={15} color="#10b981" />
             </div>
             <div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: '#f0f6ff', fontFamily: 'Space Grotesk, sans-serif' }}>Revenue Recovery</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#f0f6ff', fontFamily: 'Space Grotesk, sans-serif', display: 'flex', alignItems: 'center', gap: 8 }}>Revenue Recovery <DemoBadge /></div>
               <div style={{ fontSize: 12, color: '#6b7280' }}>Failed payment recovery system</div>
             </div>
           </div>

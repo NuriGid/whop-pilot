@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Brain, TrendingUp, AlertTriangle, Lightbulb, BarChart2, RefreshCw, Sparkles } from 'lucide-react';
 import type { AIInsight } from '@/types';
+import DemoBadge from '@/components/ui/DemoBadge';
 
 const typeConfig = {
   warning:     { icon: AlertTriangle, color: '#f87171', bg: 'rgba(248,113,113,0.1)', border: 'rgba(248,113,113,0.2)', label: 'Warning' },
@@ -29,6 +30,7 @@ export default function AIInsights({ insights, onRefresh, isLoading }: { insight
               <div style={{ fontSize: 15, fontWeight: 700, color: '#f0f6ff', fontFamily: 'Space Grotesk, sans-serif', display: 'flex', alignItems: 'center', gap: 8 }}>
                 AI CEO Insights
                 <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: 'rgba(99,102,241,0.15)', color: '#a5b4fc', fontWeight: 600, letterSpacing: '0.05em' }}>GROQ · LLAMA 3</span>
+                <DemoBadge />
               </div>
               <div style={{ fontSize: 12, color: '#6b7280' }}>Daily strategic recommendations powered by AI</div>
             </div>

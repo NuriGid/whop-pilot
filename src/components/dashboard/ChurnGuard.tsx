@@ -3,6 +3,7 @@
 import { Zap, X, UserMinus } from 'lucide-react';
 import { formatCurrency, getInitials, timeAgo } from '@/lib/utils';
 import type { ChurnEvent } from '@/types';
+import DemoBadge from '@/components/ui/DemoBadge';
 
 export default function ChurnGuard({ events }: { events: ChurnEvent[] }) {
   const recoverableValue = events.filter(e => e.recoverable).reduce((s, e) => s + e.planValue, 0);
@@ -16,7 +17,7 @@ export default function ChurnGuard({ events }: { events: ChurnEvent[] }) {
               <Zap size={15} color="#f59e0b" fill="#f59e0b" />
             </div>
             <div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: '#f0f6ff', fontFamily: 'Space Grotesk, sans-serif' }}>Churn Guard</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#f0f6ff', fontFamily: 'Space Grotesk, sans-serif', display: 'flex', alignItems: 'center', gap: 8 }}>Churn Guard <DemoBadge /></div>
               <div style={{ fontSize: 12, color: '#6b7280' }}>Recent cancellations · Auto-intervention</div>
             </div>
           </div>
