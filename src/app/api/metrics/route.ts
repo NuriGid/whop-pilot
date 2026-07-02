@@ -40,12 +40,13 @@ export async function GET(req: NextRequest) {
     const payments = paymentsData?.data ?? paymentsData ?? [];
     const paymentList = Array.isArray(payments) ? payments : [];
 
-    // Toplam geliri hesapla (Whop API total'ı dolar cinsinden döndürüyor)
-    let totalRevenue = 0;
+    // Toplam geliri hesapla (Whop API cents olarak döndürüyor, dolara bölüyoruz)
+    let totalRevenueCents = 0;
     paymentList.forEach((p: { total?: number; usd_total?: number }) => {
       const amount = p.usd_total ?? p.total ?? 0;
-      totalRevenue += amount;
+      totalRevenueCents += amount;
     });
+    const totalRevenue = totalRevenueCents / 100;
 
     // Üye sayısı (member_count company objesinde var)
     const memberCount = company?.member_count ?? paymentList.length;
