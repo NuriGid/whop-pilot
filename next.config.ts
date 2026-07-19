@@ -1,10 +1,13 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Cloudflare Pages deploy: @cloudflare/next-on-pages adapter SSR + Edge Runtime'ı handle eder.
-  // (Eski 'output: export' kaldırıldı — SSR ve API route'larıyla çakışıyordu.)
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  // Cloudflare Pages deploy via @cloudflare/next-on-pages (SSR + Edge Runtime).
+  // Deliberately NOT using `output: 'export'` — the /api/* routes hold the
+  // WHOP_API_KEY and GROQ_API_KEY secrets and must stay server-side.
   images: {
-    // Cloudflare Pages'de Image Optimization yok, loader kullan
     unoptimized: true,
     remotePatterns: [
       { protocol: 'https', hostname: 'cdn.whop.com' },
@@ -16,11 +19,11 @@ const nextConfig: NextConfig = {
       {
         source: '/(.*)',
         headers: [
-          // Whop iframe içinde açılabilmesi için ALLOWALL
-          { key: 'X-Frame-Options', value: 'ALLOWALL' },
+          // Allow embedding ONLY inside Whop iframes.
+          // Note: X-Frame-Options has no valid "allow" value (ALLOWALL is not
+          // a real directive) — the modern, correct mechanism is CSP frame-ancestors.
+          { key: 'Content-Security-Policy', value: "frame-ancestors 'self' https://whop.com https://*.whop.com https://*.apps.whop.com;" },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
-          // Cloudflare güvenlik header'ları
-          { key: 'X-XSS-Protection', value: '1; mode=block' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         ],
       },

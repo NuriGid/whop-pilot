@@ -1,28 +1,30 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, ShieldAlert, TrendingUp, DollarSign,
-  Brain, Settings, Zap, ChevronRight, Bell
+  Brain, Settings, Zap, ChevronRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const navItems = [
-  { icon: LayoutDashboard, label: 'Overview', href: '' },
-  { icon: ShieldAlert,     label: 'Retention Alerts', href: '/retention', badge: 6 },
-  { icon: Zap,             label: 'Churn Guard', href: '/churn' },
-  { icon: DollarSign,      label: 'Revenue Recovery', href: '/recovery', badge: 5 },
-  { icon: Brain,           label: 'AI Insights', href: '/insights', badge: 4 },
-  { icon: TrendingUp,      label: 'Analytics', href: '/analytics' },
+// State-based tab identifiers — navigation NEVER touches the URL.
+export type TabId = 'overview' | 'retention' | 'churn' | 'recovery' | 'insights' | 'analytics' | 'settings';
+
+const navItems: { icon: typeof LayoutDashboard; label: string; tab: TabId; badge?: number }[] = [
+  { icon: LayoutDashboard, label: 'Overview', tab: 'overview' },
+  { icon: ShieldAlert,     label: 'Retention Alerts', tab: 'retention', badge: 6 },
+  { icon: Zap,             label: 'Churn Guard', tab: 'churn' },
+  { icon: DollarSign,      label: 'Revenue Recovery', tab: 'recovery', badge: 5 },
+  { icon: Brain,           label: 'AI Insights', tab: 'insights', badge: 4 },
+  { icon: TrendingUp,      label: 'Analytics', tab: 'analytics' },
 ];
 
-interface SidebarProps { companyId: string; courseName?: string; }
+interface SidebarProps {
+  courseName?: string;
+  activeTab: TabId;
+  onTabChange: (tab: TabId) => void;
+}
 
-export default function Sidebar({ companyId, courseName = 'My Course' }: SidebarProps) {
-  const pathname = usePathname();
-  const base = `/dashboard/${companyId}`;
-
+export default function Sidebar({ courseName = 'My Course', activeTab, onTabChange }: SidebarProps) {
   return (
     <aside style={{
       width: 240,
@@ -74,20 +76,26 @@ export default function Sidebar({ companyId, courseName = 'My Course' }: Sidebar
         </div>
       </div>
 
-      {/* Nav */}
+      {/* Nav — buttons, not links. The URL never changes. */}
       <nav style={{ flex: 1, padding: '16px 12px', overflowY: 'auto' }}>
         <div style={{ fontSize: 10, fontWeight: 600, color: '#374151', letterSpacing: '0.1em', textTransform: 'uppercase', padding: '0 8px', marginBottom: 8 }}>
           Navigation
         </div>
-        {navItems.map(({ icon: Icon, label, href, badge }) => {
-          const fullHref = `${base}${href}`;
-          const isActive = href === ''
-            ? pathname === base
-            : pathname.startsWith(fullHref);
-
+        {navItems.map(({ icon: Icon, label, tab, badge }) => {
+          const isActive = activeTab === tab;
           return (
-            <Link key={href} href={fullHref} className={cn('sidebar-item', isActive && 'active')}
-              style={{ marginBottom: 2, position: 'relative' }}>
+            <button
+              key={tab}
+              type="button"
+              onClick={() => onTabChange(tab)}
+              className={cn('sidebar-item', isActive && 'active')}
+              aria-current={isActive ? 'page' : undefined}
+              style={{
+                marginBottom: 2, position: 'relative', width: '100%',
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                textAlign: 'left', font: 'inherit',
+              }}
+            >
               <Icon size={16} style={{ flexShrink: 0 }} />
               <span style={{ flex: 1 }}>{label}</span>
               {badge && (
@@ -100,17 +108,26 @@ export default function Sidebar({ companyId, courseName = 'My Course' }: Sidebar
                   {badge}
                 </span>
               )}
-            </Link>
+            </button>
           );
         })}
       </nav>
 
       {/* Bottom */}
       <div style={{ padding: '16px 12px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-        <Link href={`${base}/settings`} className="sidebar-item">
+        <button
+          type="button"
+          onClick={() => onTabChange('settings')}
+          className={cn('sidebar-item', activeTab === 'settings' && 'active')}
+          aria-current={activeTab === 'settings' ? 'page' : undefined}
+          style={{
+            width: '100%', background: 'transparent', border: 'none',
+            cursor: 'pointer', textAlign: 'left', font: 'inherit',
+          }}
+        >
           <Settings size={16} />
           <span>Settings</span>
-        </Link>
+        </button>
         <div style={{
           marginTop: 12, padding: '12px', borderRadius: 10,
           background: 'linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(139,92,246,0.08) 100%)',
